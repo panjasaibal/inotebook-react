@@ -11,9 +11,9 @@ const router = express.Router();
 //webtoken secret
 const JWT_SECRET = 'saibal4@panja';
 
-//create a new user "/create"
+//create a new user "/createuser"
 
-router.post('/create',[
+router.post('/createuser',[
     body('name','Please enater a valid name').isLength({min:3}),
     body('email','Please enater a valid email').isEmail(),
     body('passwd',"Password at least have 5 charecters").isLength({min:5}),
@@ -53,7 +53,52 @@ router.post('/create',[
     } 
     catch (error) {
        console.error(error.message); 
-       res.status(500).send(`Some errors occured: ${error.message}`)
+       res.status(500).send('Internal server error')
+    }
+   
+})
+
+//authenticate a user  "/login"
+
+router.post('/login',[
+    
+    body('email','Please enater a valid email').isEmail(),
+    body('passwd',"Password cannot ne null").exists()
+] ,async(req,res)=>{
+
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors:errors.array() })
+    }
+   
+
+    //email already exists or not
+    const {email, passwd} = req.body;
+    try {
+        let user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({error:'Please try to login with correct credentials'})
+        }
+
+        //Checking password is right or wrong
+
+        let passwordCompare = await bcrypt.compare(passwd, user.passwd);
+        if(!passwordCompare){
+            return res.status(400).json({error:'Please try to login with correct credentials'})
+        }
+
+        let payload = {user:{
+            id:user._id
+        }}
+        const authToken=  jwt.sign(payload,JWT_SECRET)      //genareting tokken
+        res.json({authToken});
+
+        
+    
+    } 
+    catch (error) {
+       console.error(error.message); 
+       res.status(500).send('Internal server error')
     }
    
 })
