@@ -48,6 +48,31 @@ router.post('/addNotes',fetchUsers, [
 
 
 
+// '/updateNote' get all notes of the user  :Login Required
+
+router.put('/updateNote/:id',fetchUsers, async (req, res)=>{
+    
+
+    const {tittle, description, tag} = req.body;
+    const newNote ={};
+
+    if(tittle){newNote.tittle = tittle};
+    if(description){newNote.description = description};
+    if(tag){newNote.tag = tag};
+
+    let note = await Note.findById(req.params.id);
+    if(!note){
+        res.status(404).send("Not Found !!!");
+    }
+
+    if(note.user.toString() != req.user.id){
+        res.status(401).send("Not alllowed !!");
+    }
+
+    note = await Note.findByIdAndUpdate(req.params.id, {$set: newNote}, {new:true});
+    res.json({note});
+
+})
 
 
 
