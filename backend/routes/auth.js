@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 
 //validation
 const { body, validationResult } = require('express-validator');
+const fetchUsers = require('../middleware/fetchuser');
 
 const router = express.Router();
 
@@ -102,6 +103,27 @@ router.post('/login',[
     }
    
 })
+
+
+
+//Get details from the logged in user    -> Login Required ,path: '/getUser'
+
+
+router.post('/getUser',fetchUsers,async(req, res)=>{
+    try {
+
+        let userId = req.user.id;
+        let user = await User.findById(userId).select('-passwd');
+        res.send({user});
+        
+        
+    } catch (error) {
+       console.error(error.message); 
+       res.status(500).send('Internal server error')
+    }
+})
+
+
 
 
 module.exports = router;
