@@ -1,7 +1,9 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const NotesSchema = new Schema({
+
+  user: {type:mongoose.Schema.Types.ObjectId, ref:'users'},
   tittle: {type:String, required:true}, // String is shorthand for {type: String}
   description: {type:String, required:true},
   tag: {type:String, default:'Genarel'},
@@ -10,4 +12,4 @@ const NotesSchema = new Schema({
   
 });
 
-module.exports = mongoose.model('nots', NotesSchema);
+module.exports = mongoose.model('notes', NotesSchema);
