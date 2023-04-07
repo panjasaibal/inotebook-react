@@ -4,46 +4,125 @@ import { useState } from "react";
 
 const NoteState = (props)=>{
 
-    // const s1 = {
-    //     "name":"Saibal",
-    //     "salary":"120"
-    // }
+    
+    const host = "http://localhost:5000/";
 
-    const initialNotes = [{
-        "_id": "642b27c082d74963d6b025c7",
-        "user": "6429ac9554d7060161fa5f93",
-        "tittle": "reminder",
-        "description": "complete the code",
-        "tag": "personal",
-        "timestamp": "2023-04-03T19:23:44.301Z",
-        "__v": 0
-    },
-    {
-        "_id": "642dca08dff77294a1fd89df",
-        "user": "6429ac9554d7060161fa5f93",
-        "tittle": "new",
-        "description": "testing the note add in frontend ",
-        "tag": "testing",
-        "timestamp": "2023-04-05T19:20:40.160Z",
-        "__v": 0
-    }]
+    const initialNotes = [];
+    const [notes, setNotes] = useState(initialNotes);
 
-    //const [state, setState] = useState(s1);
-    const [notes, setnotes] = useState(initialNotes);
+    //Get all Note of the user
+    const getAllNote = async()=>{
+        let url = `${host}api/notes/fetchAllNotes`;
 
-    // const update = ()=>{
-    //     setTimeout(() => {
-    //         setState({
-    //             "name":"Saibal Panja",
-    //             "salary":"1200"
-    //         })
-    //     }, 1500);
-    // }
+        const response = await fetch(url, {
+            method: "GET", // *GET, POST, PUT, DELETE, etc.
+           
+            headers: {
+             
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+              "auth-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQyOWFjOTU1NGQ3MDYwMTYxZmE1ZjkzIn0sImlhdCI6MTY4MDQ5OTU2N30.qwDTrAV44ZCX2pvS260od3afXkOX3A80swH33hCP-dw"
+            }
+          
+          });
+
+          const json = await response.json();
+        
+          console.log(json);
+          //Setting the notes to the state and exports to all 
+          setNotes(json);
+          console.log(notes)
+    }
+
+    //Add note
+    
+    const addNote = async(tittle, description, tag)=>{
+
+        let url = `${host}api/notes/addNotes`;
+
+        const response = await fetch(url, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+           
+            headers: {
+              "Content-Type": "application/json",
+              // 'Content-Type': 'application/json',
+              "auth-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQyOWFjOTU1NGQ3MDYwMTYxZmE1ZjkzIn0sImlhdCI6MTY4MDQ5OTU2N30.qwDTrAV44ZCX2pvS260od3afXkOX3A80swH33hCP-dw"
+            },
+          
+            body: JSON.stringify({tittle, description, tag}), // body data type must match "Content-Type" header
+          });
+          console.log(response)
+          const json = await response.json();
+        
+        setNotes(notes.concat(json));
+        
+
+    }
+    
+
+    //Delete note
+    const deleteNote = async(id)=>{
+        //Api call
+        let url = `${host}api/notes/deleteNote/${id}`;
+
+        const response = await fetch(url, {
+            method: "DELETE", // *GET, POST, PUT, DELETE, etc.
+           
+            headers: {
+              "Content-Type": "application/json",
+             
+              "auth-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQyOWFjOTU1NGQ3MDYwMTYxZmE1ZjkzIn0sImlhdCI6MTY4MDQ5OTU2N30.qwDTrAV44ZCX2pvS260od3afXkOX3A80swH33hCP-dw"
+            },
+          
+          });
+          console.log(response)
+
+        console.log("deleting :"+id);
+        const newNotes = notes.filter((note)=>{return note._id !== id});
+        setNotes(newNotes);
+
+    }
+
+    //Edit note
+
+    const editNote = async (id, tittle, description, tag)=>{
+
+        let url = `${host}api/notes/updateNote/${id}`;
+
+        const response = await fetch(url, {
+            method: "PUT", // *GET, POST, PUT, DELETE, etc.
+           
+            headers: {
+              "Content-Type": "application/json",
+              // 'Content-Type': 'application/json',
+              "auth-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQyOWFjOTU1NGQ3MDYwMTYxZmE1ZjkzIn0sImlhdCI6MTY4MDQ5OTU2N30.qwDTrAV44ZCX2pvS260od3afXkOX3A80swH33hCP-dw"
+            },
+          
+            body: JSON.stringify({tittle, description, tag}), 
+          });
+          console.log(response)
+         //return response.json();  cts
+
+        //let json = await response.json();
+        let newNotes = JSON.parse(JSON.stringify(notes));
+        for (let index = 0; index < newNotes.length; index++) {
+           
+            if(newNotes[index]._id===id){
+
+              newNotes[index].tittle = tittle;
+              newNotes[index].description = description;
+              newNotes[index].tag = tag;
+              break;
+            }
+            
+        }
+        setNotes(newNotes);
+  
+    }
 
 
 
     return (
-        <noteContext.Provider value={{notes, setnotes}}>
+        <noteContext.Provider value={{notes, addNote,deleteNote,editNote, getAllNote}}>
             {props.children}
         </noteContext.Provider>
     )
