@@ -23,6 +23,7 @@ function Notes() {
     }
     useEffect(() => {
         getAllNote();
+        // eslint-disable-next-line
     }, [])
 
     const updateNote = (currentNote) => {
@@ -48,18 +49,20 @@ function Notes() {
                         <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel">Edit Note</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        
                         </div>
                         <div className="modal-body">
                             
                             <form className='my-3'>
                                 <div className="mb-3">
                                     <label htmlFor="tittle" className="form-label">Tittle</label>
-                                    <input type="text" className="form-control" id="tittle" name='tittle' value={note.tittle} onChange={onChange} />
+                                    <input type="text" className="form-control" id="tittle" name='tittle' value={note.tittle} onChange={onChange} minLength={3} required />
+                                    
 
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="description" className="form-label">Description</label>
-                                    <input type="text" className="form-control" id="description" name='description' value={note.description} onChange={onChange} />
+                                    <input type="text" className="form-control" id="description" name='description' value={note.description} onChange={onChange} minLength={5} required/>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="tag" className="form-label">Tag</label>
@@ -70,7 +73,7 @@ function Notes() {
                         </div>
                         <div className="modal-footer">
                             <button type="button" ref = {refClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary" onClick={handleClick}>Edit Note</button>
+                            <button type="button" className="btn btn-primary" onClick={handleClick} disabled={note.tittle.length<3 || note.description.length<5}>Edit Note</button>
                         </div>
                     </div>
                 </div>
