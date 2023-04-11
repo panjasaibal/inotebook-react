@@ -28,8 +28,9 @@ function Login(props) {
           const json = await response.json();
           console.log(json);
           if(json.success){
-            localStorage.setItem("token", json.authtoken)
+            localStorage.setItem("token", json.authToken)
             history('/')
+            console.log(localStorage.getItem("token"))
             props.showAlert("Logged in successfully", "success");
 
           }else{

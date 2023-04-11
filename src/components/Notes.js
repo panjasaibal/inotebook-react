@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import noteContext from '../context/notes/noteContext';
 import NoteItem from './NoteItem';
 import Addnote from './AddNote';
+
 
 function Notes() {
     const context = useContext(noteContext);
     const { notes, getAllNote, editNote } = context;
 
-    const [note, setNote] = useState({id:'',tittle:'', description:'', tag:'default'})
+    const [note, setNote] = useState({id:'',tittle:'', description:'', tag:''})
+    let history = useNavigate();
 
     const handleClick = (e)=>{
        // console.log("Updateing the note: ", note)
@@ -22,7 +25,14 @@ function Notes() {
             setNote({...note, [e.target.name]:e.target.value})
     }
     useEffect(() => {
-        getAllNote();
+        if(localStorage.getItem("token")!== 'undefined'){
+            getAllNote();
+            console.log(localStorage.getItem('token'))
+        }
+        else{
+            history("/login");
+        }
+        
         // eslint-disable-next-line
     }, [])
 
@@ -82,8 +92,8 @@ function Notes() {
             <div className='my-2'>
                 <h2>Your All Notes</h2>
                 <div className='row'>
-                    {notes.map((note) => {
-                        return <NoteItem key={note._id} updateNote={updateNote} note={note} />
+                    {notes.map((n) => {
+                        return <NoteItem key={n._id} updateNote={updateNote} note={n} />
                     })}
 
                 </div>
