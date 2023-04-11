@@ -19,10 +19,11 @@ router.post('/createuser',[
     body('email','Please enater a valid email').isEmail(),
     body('passwd',"Password at least have 5 charecters").isLength({min:5}),
 ] ,async(req,res)=>{
+    let success = false;
 
     const errors = validationResult(req)
     if(!errors.isEmpty()){
-        return res.status(400).json({errors:errors.array() })
+        return res.status(400).json({success,errors:errors.array() })
     }
     //res.send(req.body)
 
@@ -30,7 +31,7 @@ router.post('/createuser',[
     try {
         let user = await User.findOne({email:req.body.email});
         if(user){
-            return res.status(400).json({error:'email id already exists'})
+            return res.status(400).json({success,error:'email id already exists'})
         }
 
         //genareting salt
@@ -49,8 +50,9 @@ router.post('/createuser',[
         const data = {
             user:{id:user._id}
         }
-        const authToken=  jwt.sign(data,JWT_SECRET)      //genareting tokken
-        res.json({authToken});
+        const authToken=  jwt.sign(data,JWT_SECRET) 
+        success = true;     //genareting tokken
+        res.json({success,authToken});
     } 
     catch (error) {
        console.error(error.message); 
@@ -64,9 +66,9 @@ router.post('/createuser',[
 router.post('/login',[
     
     body('email','Please enater a valid email').isEmail(),
-    body('passwd',"Password cannot ne null").exists()
+    body('passwd',"Password cannot be null").exists()
 ] ,async(req,res)=>{
-
+    let success = false;
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array() })
@@ -78,21 +80,22 @@ router.post('/login',[
     try {
         let user = await User.findOne({email});
         if(!user){
-            return res.status(400).json({error:'Please try to login with correct credentials'})
+            return res.status(400).json({success,error:'Please try to login with correct credentials'})
         }
 
         //Checking password is right or wrong
 
         let passwordCompare = await bcrypt.compare(passwd, user.passwd);
         if(!passwordCompare){
-            return res.status(400).json({error:'Please try to login with correct credentials'})
+            return res.status(400).json({success,error:'Please try to login with correct credentials'})
         }
 
         let payload = {user:{
             id:user._id
+            
         }}
         const authToken=  jwt.sign(payload,JWT_SECRET)      //genareting tokken
-        res.json({authToken});
+        res.json({success:true,authToken});
 
         
     

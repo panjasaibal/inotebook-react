@@ -10,10 +10,10 @@ function Notes() {
     const [note, setNote] = useState({id:'',tittle:'', description:'', tag:'default'})
 
     const handleClick = (e)=>{
-        console.log("Updateing the note: ", note)
+       // console.log("Updateing the note: ", note)
             editNote(note._id, note.tittle, note.description, note.tag);
             
-            //e.preventDefault();
+            e.preventDefault();
             refClose.current.click();
             
     }
@@ -27,7 +27,7 @@ function Notes() {
     }, [])
 
     const updateNote = (currentNote) => {
-        console.log("Clicked")
+       // console.log("Clicked")
         ref.current.click();
         setNote(currentNote);
 

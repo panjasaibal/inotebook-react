@@ -27,10 +27,10 @@ const NoteState = (props)=>{
 
           const json = await response.json();
         
-          console.log(json);
+          //console.log(json);
           //Setting the notes to the state and exports to all 
           setNotes(json);
-          console.log(notes)
+          //console.log(notes)
     }
 
     //Add note
@@ -50,7 +50,7 @@ const NoteState = (props)=>{
           
             body: JSON.stringify({tittle, description, tag}), // body data type must match "Content-Type" header
           });
-          console.log(response)
+          //console.log(response)
           const json = await response.json();
         
         setNotes(notes.concat(json));
@@ -74,9 +74,9 @@ const NoteState = (props)=>{
             },
           
           });
-          console.log(response)
+          //console.log(response)
 
-        console.log("deleting :"+id);
+       // console.log("deleting :"+id);
         const newNotes = notes.filter((note)=>{return note._id !== id});
         setNotes(newNotes);
 
@@ -99,7 +99,7 @@ const NoteState = (props)=>{
           
             body: JSON.stringify({tittle, description, tag}), 
           });
-          console.log(response)
+         // console.log(response)
          //return response.json();  cts
 
         //let json = await response.json();

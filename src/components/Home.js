@@ -4,13 +4,13 @@ import Notes from './Notes';
 
 //import noteContext from '../context/notes/noteContext';
 
-function Home() {
-  
+function Home(props) {
+  const showAlert = {props}
   return (
     <div className='container my-3'>
      
 
-      <Notes/>
+      <Notes showAlert={showAlert}/>
 
     </div>
   )
